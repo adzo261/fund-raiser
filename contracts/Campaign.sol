@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import "@openzeppelin/contracts/ownership/Ownable.sol";
-import "@openzeppelin/contracts/math/SafeMath.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 contract Campaign is Ownable {
     using SafeMath for uint256;
@@ -21,8 +21,8 @@ contract Campaign is Ownable {
     string public description;
     string public descriptionURL;
     uint256 public goalAmount;
-    uint256 public expiresInDays;
-    uint256 public refundPeriodInDays;
+    uint256 public expiresIn; //In seconds
+    uint256 public refundPeriod; //In seconds
     address payable public beneficiary;
     uint256 public campaignStartTime;
     uint256 public totalAmountRaised;
@@ -39,8 +39,8 @@ contract Campaign is Ownable {
         string memory _description,
         string memory _descriptionURL,
         uint256 _goalAmount,
-        uint256 _expiresInDays,
-        uint256 _refundPeriodInDays,
+        uint256 _expiresIn,
+        uint256 _refundPeriod,
         address payable _beneficiary,
         address _custodian
     ) {
@@ -50,8 +50,8 @@ contract Campaign is Ownable {
         descriptionURL = _descriptionURL;
         beneficiary = _beneficiary;
         goalAmount = _goalAmount;
-        expiresInDays = _expiresInDays;
-        refundPeriodInDays = _refundPeriodInDays;
+        expiresIn = _expiresIn;
+        refundPeriod = _refundPeriod;
         campaignStartTime = block.timestamp;
         _transferOwnership(_custodian);
     }
@@ -85,7 +85,7 @@ contract Campaign is Ownable {
 
     modifier notExpired {
         require(
-            block.timestamp  < campaignStartTime +  expiresInDays * 1 days,
+            block.timestamp  < campaignStartTime +  expiresIn,
             "Campaign has expired"
         );
         _;
@@ -93,7 +93,7 @@ contract Campaign is Ownable {
 
     modifier withinRefundPeriod(uint256 _donationTimestamp) {
         require(
-            block.timestamp  < _donationTimestamp +  refundPeriodInDays * 1 days,
+            block.timestamp  < _donationTimestamp +  refundPeriod,
             "Refund period has ended"
         );
         _;
