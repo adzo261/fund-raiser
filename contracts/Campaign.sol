@@ -60,11 +60,11 @@ contract Campaign is Ownable {
         beneficiary = _beneficiary;
     } 
 
-    function donate(address _donor, uint256 _amount)  public payable notExpired canDonateOnce(_donor) {
+    function donate()  public payable notExpired canDonateOnce(msg.sender) {
         numberOfDonations++;
-        totalAmountRaised += _amount;
-        donations[_donor] = Donation(numberOfDonations, _donor, _amount, block.timestamp);
-        emit DonationReceived(numberOfDonations, _donor, _amount, block.timestamp);
+        totalAmountRaised += msg.value;
+        donations[msg.sender] = Donation(numberOfDonations, msg.sender, msg.value, block.timestamp);
+        emit DonationReceived(numberOfDonations, msg.sender, msg.value, block.timestamp);
     }
 
     function getRefund(address payable _donor) public notExpired hasDonated(_donor) withinRefundPeriod(donations[_donor].timestamp) {
