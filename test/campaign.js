@@ -1,17 +1,5 @@
 const Campaign = artifacts.require("Campaign");
 
-/* 
-_name
-_imageURL
-_description
-_descriptionURL
-_goalAmount
-_expiresIn
-_refundPeriod
-_beneficiary
-_custodian 
-*/
-
 contract('Campaign', async (accounts) => {
   const _name = "Beneficiary Name";
   const _imageURL = "https://picsum.photos/200/300"; 
